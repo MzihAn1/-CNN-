@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图像分类系统</title>
+    <link rel="shortcut icon" href="#" />
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+
+</head>
+<body>
+    <h1 align="center">仅支持对玫瑰、月季、樱花、郁金香、紫罗兰进行分类</h1>
+    <div id="Box">
+        
+        <div id="box1">
+            <a href="javascript:;" class="file">选择图片
+                <input type="file" name="file" id="file0"><br>
+            </a>
+            <img src="" alt="" id="img0">
+        </div>
+
+        <div id="box2">
+            <input type="button" id="b0" onclick="test()" value="识别">
+            <pre id="out"></pre>
+        </div>
+    </div>
+
+    <script>
+        $("#file0").change(function(){
+            var objUrl = window.URL.createObjectURL(this.files[0]) // 转成可以在本地预览的格式
+            console.log("objUrl = " + objUrl);
+            if (objUrl){
+                $("#img0").attr("src", objUrl);
+            }
+        });
+
+        function test() {
+        var fileobj = $("#file0")[0].files[0];
+        console.log(fileobj);
+        //使用 FormData 对象，不需要设置请求头
+        var form = new FormData();
+        //使用append()方法传入键和值
+        form.append("file", fileobj);
+        var out='';
+        var flower='';
+        $.ajax({
+            type: 'POST',
+            url: "predict",
+            data: form,
+
+            async: false,       //同步执行 (默认: true) 默认设置下，所有请求均为异步请求
+            processData: false, // 告诉jquery要传输data对象 ,(默认: true) 默认情况下，通过data选项传递进来的数据，
+                               //  如果是一个对象(技术上讲只要不是字符串)，都会处理转化成一个查询字符串
+            contentType: false, //告诉jquery不需要增加请求头对于contentType的设置
+            success: function (arg) {
+            console.log(arg)
+            out = arg.result;
+        },error:function(){
+                console.log("后台处理错误");
+            }
+    });
+
+        $.each(out,function(index,e){
+            flower+=`<div id="box3">${e}</div>`
+        });
+
+        document.getElementById("out").innerHTML=flower;
+
+    }
+
+
+
+    
+
+    </script>
+
+
+    <style>
+        h1 {
+            font: 400 16px 'Open Sans';
+            text-transform: uppercase;
+            color: #999;
+            text-shadow: 1px 1px 1px #fff;
+            margin-bottom: 30px;
+} 
+        #Box {
+            text-align: left;
+            margin-left: 500px;
+            margin-top: 100px;
+        }
+        #box1 {
+            float:left;
+        }
+        #img0 {
+            margin-top:20px;
+            width: 35rem;
+            height: 30rem;
+        }
+        #box2 {
+            float:left;
+            margin-left:50px;
+        }
+        #out {
+            width:320px;
+            height:50px;
+            line-height: 50px;
+            margin-top:20px;
+        }
+        #box3 {
+            border-bottom: 1px solid #CCCCCC;
+            line-height: 60px;
+            font-size:16px;
+        }
+        
+        .file input {
+            position: absolute;
+            font-size: 13px;
+            right: 0;
+            top: 0;
+            opacity: 0;
+            border: 1px solid #333;
+            padding: 4px 4px;
+            overflow: hidden;
+            text-indent: 0;
+            width:100px;
+            height:30px;
+            line-height: 30px;
+            border-radius: 5px;
+            color: #FFFFFF;
+
+        }
+
+        #b0 {
+            padding: 4px 10px;
+            overflow: hidden;
+            width:63px;
+            height:30px;
+            line-height: 20px;
+            background: linear-gradient(to bottom, #4eb5e5 0%,#389ed5 100%); /* W3C */
+            border: none;
+            border-radius: 5px;
+            position: relative;
+            border-bottom: 4px solid #2b8bc6;
+            color: #fbfbfb;
+            font-weight: 600;
+            font-family: 'Open Sans', sans-serif;
+            text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+            font-size: 15px;
+            text-align: left;
+            text-indent: 5px;
+            box-shadow: 0px 3px 0px 0px rgba(0,0,0,.2);
+            cursor: pointer;
+            }
+            #b0:active {
+            box-shadow: 0px 2px 0px 0px rgba(0,0,0,.2);
+            top: 1px;
+            }
+
+        
+            .file {
+            padding: 4px 4px;
+            overflow: hidden;
+            text-decoration: none;
+            width:100px;
+            height:30px;
+            line-height: 30px;
+            border-radius: 5px;
+            color: #333;
+            background: linear-gradient(to bottom, #4eb5e5 0%,#389ed5 100%); /* W3C */
+            border: none;
+            border-radius: 5px;
+            position: relative;
+            border-bottom: 4px solid #2b8bc6;
+            color: #fbfbfb;
+            font-weight: 600;
+            font-family: 'Open Sans', sans-serif;
+            text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+            font-size: 15px;
+            text-align: left;
+            text-indent: 5px;
+            box-shadow: 0px 3px 0px 0px rgba(0,0,0,.2);
+            cursor: pointer;
+
+            }
+            .file:active {
+            box-shadow: 0px 2px 0px 0px rgba(0,0,0,.2);
+            top: 1px;
+            }
+
+            
+
+
+
+
+    </style>
+</body>
+</html>
